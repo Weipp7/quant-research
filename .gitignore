@@ -25,6 +25,7 @@ Thumbs.db
 
 # gstack / 工具产生的本地日志
 *-reviews.jsonl
+.claude/
 
 # 数据缓存(默认不入库,需要分享时再单独添加)
 data/cache/
