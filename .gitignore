@@ -28,7 +28,11 @@ Thumbs.db
 .claude/
 
 # 数据缓存(默认不入库,需要分享时再单独添加)
+data/*.duckdb
 data/cache/
 *.parquet
 *.h5
 *.hdf5
+
+# 由脚本生成的预览图(运行脚本即可重新生成)
+notebooks/*_preview.png
