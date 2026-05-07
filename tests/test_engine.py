@@ -62,10 +62,10 @@ def test_buy_and_hold_moutai():
             ctx.buy(T1_SYMBOL, T1_SHARES)
             bought = True
 
-    nav_df = run_backtest(bars, strategy, INITIAL_CASH)
+    result = run_backtest(bars, strategy, INITIAL_CASH)
 
     # 取最接近 T1_SELL_DATE 的那一天 (应该精确命中, 但 date 类型可能是 datetime.date)
-    last_nav = nav_df.iloc[-1]["nav"]
+    last_nav = result.nav.iloc[-1]["nav"]
 
     rel_err = abs(last_nav - T1_EXPECTED_NAV) / T1_EXPECTED_NAV
     assert rel_err < TOLERANCE, (
@@ -148,8 +148,8 @@ def test_monthly_equal_weight_rebalance():
                 if shares > 0:
                     ctx.buy(s, shares)
 
-    nav_df = run_backtest(bars, strategy, INITIAL_CASH)
-    engine_nav = nav_df.iloc[-1]["nav"]
+    result = run_backtest(bars, strategy, INITIAL_CASH)
+    engine_nav = result.nav.iloc[-1]["nav"]
 
     rel_err = abs(engine_nav - golden) / golden
     assert rel_err < TOLERANCE, (
