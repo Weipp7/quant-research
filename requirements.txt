@@ -31,6 +31,7 @@ html5lib==1.1
 httpcore==1.0.9
 httpx==0.28.1
 idna==3.13
+iniconfig==2.3.0
 ipykernel==7.2.0
 ipython==9.13.0
 ipython_pygments_lexers==1.1.1
@@ -80,6 +81,7 @@ parso==0.8.7
 pexpect==4.9.0
 pillow==12.2.0
 platformdirs==4.9.6
+pluggy==1.6.0
 prometheus_client==0.25.0
 prompt_toolkit==3.0.52
 psutil==7.2.2
@@ -89,6 +91,7 @@ py-mini-racer==0.6.0
 pycparser==3.0
 Pygments==2.20.0
 pyparsing==3.3.2
+pytest==9.0.3
 python-dateutil==2.9.0.post0
 python-json-logger==4.1.0
 PyYAML==6.0.3
