@@ -52,12 +52,7 @@ for i, date in enumerate(monthly_dates[:-1]):
     except Exception:
         continue
 
-    # 2.2 过滤 ST / 停牌
-    current_data = get_current_data(stocks)   # 注意：研究环境不支持当日数据，此处仅做结构示意
-    # 实际过滤：用 get_extras + get_security_info 或直接跳过，保持简单
-    # 这里先不做 ST 过滤，第一版看整体方向
-
-    # 2.3 获取 BP 因子值（= 1/PB）
+    # 2.2 获取 BP 因子值（= 1/PB）
     try:
         fund_df = get_fundamentals(
             query(valuation.code, valuation.pb_ratio)
