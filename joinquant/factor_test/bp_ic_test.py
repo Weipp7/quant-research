@@ -14,10 +14,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib
-from jqdatasdk import *
-
-matplotlib.use("Agg")   # 聚宽研究环境用 Agg 后端
 
 # ──────────────────────────────────────────────
 # 参数
@@ -159,9 +155,7 @@ ax2.set_xlabel("Rank IC")
 ax2.legend()
 
 plt.tight_layout()
-plt.savefig("/tmp/bp_ic_timeseries.png", dpi=120)
-plt.close()
-print("\nIC 图已保存：/tmp/bp_ic_timeseries.png")
+plt.show()
 
 # ──────────────────────────────────────────────
 # 5. 分层回测（5分位多空）
@@ -217,9 +211,7 @@ ax.set_xlabel("月数")
 ax.set_ylabel("累计收益")
 ax.legend()
 plt.tight_layout()
-plt.savefig("/tmp/bp_quantile_returns.png", dpi=120)
-plt.close()
-print("分层图已保存：/tmp/bp_quantile_returns.png")
+plt.show()
 
 # 打印各分位年化收益
 print("\n各分位平均月收益（年化）：")
