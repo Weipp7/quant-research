@@ -28,8 +28,7 @@ N_QUANTILES  = 5                # 分层数
 # ──────────────────────────────────────────────
 # 1. 生成调仓日期（每月第一个交易日）
 # ──────────────────────────────────────────────
-all_trade_days = pd.DatetimeIndex(get_all_trade_days())
-all_trade_days = all_trade_days[(all_trade_days >= START_DATE) & (all_trade_days <= END_DATE)]
+all_trade_days = pd.DatetimeIndex(get_trade_days(start_date=START_DATE, end_date=END_DATE))
 
 monthly_dates = (pd.Series(all_trade_days)
                  .groupby([all_trade_days.year, all_trade_days.month])
