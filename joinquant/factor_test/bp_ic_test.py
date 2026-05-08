@@ -11,6 +11,7 @@
   - 5分位分层收益图（多空收益）
 """
 
+from jqdata import *
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
