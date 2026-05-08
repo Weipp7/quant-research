@@ -28,7 +28,7 @@ import datetime
 def initialize(context):
     set_benchmark('000300.XSHG')
     set_option('use_real_price', True)
-    log.info('多因子选股 V1 (BP+ROE+MOM, Top30, 沪深300, 月度调仓)')
+    log.info('多因子选股 V1 (BP+ROE+MOM, Top10, 沪深300, 月度调仓, 5万资金)')
 
     set_order_cost(OrderCost(
         close_tax=0.001,
@@ -39,9 +39,9 @@ def initialize(context):
     set_slippage(PriceRelatedSlippage(0.001))
 
     g.universe    = '000300.XSHG'
-    g.top_n       = 30
-    g.mom_long    = 252    # 动量回看期（约12个月交易日）
-    g.mom_short   = 21     # 短期反转剔除（约1个月）
+    g.top_n        = 10    # 5万资金：5万/10=¥5000/只，可买价格≤¥50的股票
+    g.mom_long     = 252   # 动量回看期（约12个月交易日）
+    g.mom_short    = 21    # 短期反转剔除（约1个月）
     # 无创业板/科创板权限时设为 True（默认开启）
     g.exclude_kcyb = True  # 排除 300xxx（创业板）和 688xxx（科创板）
 
@@ -142,10 +142,13 @@ def get_factor_scores(context, stocks):
 
 
 def filter_stocks(context, stocks):
-    """过滤 ST / 停牌 / 上市不足 250 天 / 创业板 / 科创板"""
+    """过滤 ST / 停牌 / 上市不足 250 天 / 创业板 / 科创板 / 买不起1手"""
     current_data = get_current_data()
     today = context.current_dt.date()
+    # 每只股票的目标金额：买不起1手（100股）的直接排除
+    per_position = context.portfolio.total_value / g.top_n
     filtered = []
+    skipped_price = 0
     for s in stocks:
         # 排除创业板（300xxx）和科创板（688xxx）
         if g.exclude_kcyb:
@@ -153,9 +156,17 @@ def filter_stocks(context, stocks):
             if code.startswith('300') or code.startswith('688'):
                 continue
         try:
-            if current_data[s].is_st:
+            cd = current_data[s]
+            if cd.is_st:
                 continue
-            if current_data[s].paused:
+            if cd.paused:
+                continue
+            # 用昨收估算今日价格，过滤买不起1手的股票
+            price = cd.last_price
+            if price is None or price <= 0:
+                continue
+            if price * 100 > per_position:
+                skipped_price += 1
                 continue
             info = get_security_info(s)
             if info is None:
@@ -165,6 +176,8 @@ def filter_stocks(context, stocks):
             filtered.append(s)
         except Exception:
             continue
+    if skipped_price > 0:
+        log.info('  价格过高跳过 %d 只（1手 > ¥%.0f）' % (skipped_price, per_position))
     return filtered
 
 
