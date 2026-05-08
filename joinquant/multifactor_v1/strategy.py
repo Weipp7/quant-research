@@ -41,6 +41,8 @@ def initialize(context):
     g.top_n       = 30
     g.mom_long    = 252    # 动量回看期（约12个月交易日）
     g.mom_short   = 21     # 短期反转剔除（约1个月）
+    # 无创业板/科创板权限时设为 True（默认开启）
+    g.exclude_kcyb = True  # 排除 300xxx（创业板）和 688xxx（科创板）
 
     run_monthly(rebalance, monthday=1, time='open',
                 reference_security='000300.XSHG')
@@ -139,10 +141,15 @@ def get_factor_scores(context, stocks):
 
 
 def filter_stocks(stocks):
-    """过滤 ST / 停牌 / 上市不足 250 天"""
+    """过滤 ST / 停牌 / 上市不足 250 天 / 创业板 / 科创板"""
     current_data = get_current_data()
     filtered = []
     for s in stocks:
+        # 排除创业板（300xxx）和科创板（688xxx）
+        if g.exclude_kcyb:
+            code = s.split('.')[0]
+            if code.startswith('300') or code.startswith('688'):
+                continue
         try:
             if current_data[s].is_st:
                 continue
