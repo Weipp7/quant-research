@@ -19,6 +19,7 @@ IC 测试结果（2016-2023，沪深300）：
 from jqdata import *
 import pandas as pd
 import numpy as np
+import datetime
 
 
 # ────────────────────────────────────────────
@@ -140,9 +141,10 @@ def get_factor_scores(context, stocks):
     return df['score'].sort_values(ascending=False)
 
 
-def filter_stocks(stocks):
+def filter_stocks(context, stocks):
     """过滤 ST / 停牌 / 上市不足 250 天 / 创业板 / 科创板"""
     current_data = get_current_data()
+    today = context.current_dt.date()
     filtered = []
     for s in stocks:
         # 排除创业板（300xxx）和科创板（688xxx）
@@ -158,8 +160,7 @@ def filter_stocks(stocks):
             info = get_security_info(s)
             if info is None:
                 continue
-            import datetime
-            if (datetime.date.today() - info.start_date).days < 250:
+            if (today - info.start_date).days < 250:
                 continue
             filtered.append(s)
         except Exception:
@@ -181,7 +182,7 @@ def rebalance(context):
         return
 
     # 2. 过滤
-    tradable = filter_stocks(universe)
+    tradable = filter_stocks(context, universe)
     log.info('可交易标的：%d 只（原 %d 只）' % (len(tradable), len(universe)))
 
     if len(tradable) < g.top_n:
