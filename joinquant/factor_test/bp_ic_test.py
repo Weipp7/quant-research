@@ -77,11 +77,13 @@ for i, date in enumerate(monthly_dates[:-1]):
         frequency="daily",
         fields=["close"],
         skip_paused=False,
-        fq="pre"
+        fq="pre",
+        panel=False,
     )
-    # price_data 是 panel：(date × stock)
-    close_start = price_data["close"].iloc[0]
-    close_end   = price_data["close"].iloc[-1]
+    # panel=False → DataFrame with columns [time, code, close]
+    close_pivot = price_data.pivot(index="time", columns="code", values="close")
+    close_start = close_pivot.iloc[0]
+    close_end   = close_pivot.iloc[-1]
     forward_ret = (close_end / close_start - 1).rename("forward_ret")
 
     # 2.5 合并，计算 Rank IC（Spearman 相关）
@@ -177,10 +179,12 @@ for i, date in enumerate(monthly_dates[:-1]):
 
     price_data = get_price(
         list(fund_df.index), start_date=date, end_date=next_date,
-        frequency="daily", fields=["close"], skip_paused=False, fq="pre"
+        frequency="daily", fields=["close"], skip_paused=False, fq="pre",
+        panel=False,
     )
-    close_start = price_data["close"].iloc[0]
-    close_end   = price_data["close"].iloc[-1]
+    close_pivot = price_data.pivot(index="time", columns="code", values="close")
+    close_start = close_pivot.iloc[0]
+    close_end   = close_pivot.iloc[-1]
     forward_ret = (close_end / close_start - 1).rename("forward_ret")
 
     merged = fund_df["bp"].to_frame().join(forward_ret, how="inner").dropna()
